@@ -6,7 +6,9 @@ import React,{ useState } from 'react'
 import Layout from '../components/Layout';
 
 import { useMutation,gql } from '@apollo/client';
-import { FormValues } from '../Interfaces/FormValues';
+import { useRouter } from 'next/router';
+
+
 
 const MUTATION =gql`
   mutation addUser($input: UserInput!){
@@ -28,10 +30,11 @@ const mes = (email: string) => {
 };
 
   // State for the message 
-const [ message, saveMessage] = useState(null);
+const [ message, saveMessage] = useState<String | null>(null);
   
-  const [ addUser ] = useMutation(MUTATION);
+const [ addUser ] = useMutation(MUTATION);
 
+const router = useRouter();
 // console.log(data);
 // console.log('Err',error);
 // console.log('Load',loading);
@@ -66,8 +69,11 @@ const [ message, saveMessage] = useState(null);
             input: values
           }
         });
-
-        saveMessage(null);
+        saveMessage(`Se creo correctamente el usuario: ${data.addUser.name}`);
+        setTimeout(() => { 
+          saveMessage(null) 
+          router.push('/login');
+        }, 3000)
       } catch (error: any) {
        saveMessage(error.message.replace('GraphQL error: ',''));
        setTimeout(() =>{
